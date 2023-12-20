@@ -7,13 +7,16 @@ ADD LINK
 -> your link now pops up under the "Add" button.
 
 DELETE LINK
+
 Link will get deleted if you click on "Delete" next to your link
 
 EXPORT AS .html
+
 Click on Export and the .html will be automatically downloaded
 
 
 FAQ:
+
 Where are the links saved?
 In your browser
 
