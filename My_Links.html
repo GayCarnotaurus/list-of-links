@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      body {
+        background-color: #f2f2f2;
+      }
+      h1 {
+        text-align: center;
+        font-family: 'Roboto', sans-serif;
+        font-size: 5e;
+        margin-top: 50px;
+        color: #1B43A1;
+      }
+	 
+      #link-form {
+        text-align: center;
+        margin-top: 50px;
+		font-size: 20px;
+      }
+      #link-form input {
+        width: 80%;
+        padding: 12px 20px;
+        margin: 8px 0;
+        box-sizing: border-box;
+        border: 2px solid #ccc;
+        border-radius: 4px;
+		font-size: 20px;
+      }
+      #link-form button {
+        width: 30%;
+        background-color: #1B43A1;
+        color: white;
+        padding: 14px 20px;
+        margin: 8px 0;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-family: 'Roboto', sans-serif;
+		font-size: 20px;
+      }
+	  #link-form button:hover {
+    background-color: #cc0000;
+  }
+	 
+  /* Set font and background color for the link list */
+  #link-list {
+    font-family: Arial, sans-serif;
+	font-size: 20px;
+    background-color: #f2f2f2;
+    padding: 20px;
+    border-radius: 10px;
+  }
+
+  /* Style the links */
+  #link-list li {
+    list-style: none;
+    margin-bottom: 10px;
+  }
+
+  /* Style the link text */
+  #link-list a {
+    color: #000;
+    text-decoration: none;
+    font-size: 20px;
+  }
+  #link-list a:hover{
+        color: #1B43A1;
+    }
+
+  /* Style the delete button */
+  #link-list button {
+    background-color: #1B43A1;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    float: right;
+    cursor: pointer;
+	font-size: 10px;
+  }
+
+  /* Change the background color of the delete button on hover */
+  #link-list button:hover {
+    background-color: #cc0000;
+  }
+  
+  #link-button-container {
+	width: 80%; /* oder eine andere gewünschte Breite */
+	 padding: 12px 20px;
+        box-sizing: border-box;
+    margin: 8px auto; /* zentriert das Element horizontal */
+    text-align: left; /* zentriert den Text innerhalb des Elements */
+	border: 2px solid #ccc;
+    border-radius: 4px;	
+}
+    </style>
+  </head>
+  
+  <body>
+  <h1>My Links</h1>
+  <form id="link-form">
+    <input type="text" id="link-name" placeholder="Link name">
+    <input type="text" id="link-url" placeholder="Link URL">
+    <div>
+      <button id="add-button" onclick="addLink()">Add</button>
+    </div>
+  </form>
+  <div id="link-button-container">
+  <ul id="link-list">
+  </ul>
+  <form id="link-form">
+  <button id="add-button" onclick="exportLinks()">Export</button>
+ <form>
+  </div>
+</body>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.8/FileSaver.min.js"></script>
+<script>
+function exportLinks() {
+  var linkList = document.querySelectorAll("#link-list a");
+  var linkListHTML = '';
+  linkList.forEach(function(link) {
+    linkListHTML += '<li><a href="'+link.href+'">'+link.innerText+'</a></li>';
+  });
+  linkListHTML = '<ul  id="link-list">'+linkListHTML+'</ul>';
+
+  var html = '<html><head><meta charset="utf-8"><title>Links</title><style>  body {font-family: Arial, sans-serif;background-color: black;     color: white;  }#link-list a {    color: white;    text-decoration: none;  }  #link-list a:hover {    color: #1B43A1;}</style></head><body> <h1>Link Liste</h1>'+linkListHTML+'</body></html>';
+  var blob = new Blob([html], {type: "text/html;charset=utf-8"});
+  saveAs(blob, "Links.html");
+}
+
+
+</script>
+
+    <script>
+      // On page load, load any previously saved links
+window.onload = loadLinks;
+
+// An array to store the links
+let links = [];
+let linkList = document.getElementById("link-list");
+
+
+function loadLinks() {
+  // Get the saved links from local storage
+  let savedLinks = localStorage.getItem("links");
+  if (savedLinks) {
+    links = JSON.parse(savedLinks);
+    // Add the saved links to the page
+    for (let link of links) {
+      addLinkToPage(link.name, link.url);
+    }
+  }
+}
+
+// Function to add a link to the page
+function addLinkToPage(name, url) {
+  // Create a new <li> element
+  let newLink = document.createElement("li");
+  // Create a new <a> element
+  let link = document.createElement("a");
+  link.href = url;
+  link.innerText = name;
+  // Append the <a> element to the <li> element
+  newLink.appendChild(link);
+  // Append the <li> element to the link list
+  linkList.appendChild(newLink);
+  // Create a new delete button
+  let deleteBtn = document.createElement("button");
+  deleteBtn.innerText = "Delete";
+  deleteBtn.onclick = deleteLink;
+  newLink.appendChild(deleteBtn);
+}
+
+function addLink() {
+  // Get the link name and URL from the form
+  let linkName = document.getElementById("link-name").value;
+  let linkUrl = document.getElementById("link-url").value;
+
+  // Add the new link to the page
+  addLinkToPage(linkName, linkUrl);
+  // Add the new link to the links array
+  links.push({name: linkName, url: linkUrl});
+  // Save the links to local storage
+  localStorage.setItem("links", JSON.stringify(links));
+}
+
+function deleteLink(event) {
+  // Get the parent <li> element of the button that was clicked
+  let linkToDelete = event.target.parentNode;
+  // Get the name of the link to delete
+  let linkName = linkToDelete.querySelector("a").innerText;
+  // Remove the <li> element from the page
+  linkToDelete.parentNode.removeChild(linkToDelete);
+
+  // Find the link object in the links array
+  for (let i = 0; i < links.length; i++) {
+    if (links[i].name === linkName) {
+      // Remove the link object from the array
+      links.splice(i, 1);
+      break;
+    }
+  }
+  // Save the updated links to local storage
+  localStorage.setItem("links", JSON.stringify(links));
+}
+    </script>
+  </body>
+</html>
