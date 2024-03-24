@@ -13,7 +13,3 @@ EXPORT AS .html
 ->   Click on Export and the .html will be automatically downloaded
 
 
-FAQ:
-->  Where are the links saved?
-    In your browser
-
